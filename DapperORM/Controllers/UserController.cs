@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using DapperORM.Models;
 
@@ -8,19 +9,19 @@ namespace DapperORM.Controllers
 	{
 		private readonly UserRepository _userRepository = new UserRepository();
 		// GET: User
-		public ActionResult Index()
+		public async Task<ActionResult> Index()
 		{
-			return View(_userRepository.GetUsers());
+			return View(await _userRepository.GetUsers());
 		}
 
 		// GET: User/Details/5
-		public ActionResult Details(int? id)
+		public async Task<ActionResult> Details(int? id)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			var user = _userRepository.Get(id.Value);
+			var user = await _userRepository.Get(id.Value);
 			if (user == null)
 			{
 				return HttpNotFound();
@@ -39,11 +40,11 @@ namespace DapperORM.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Create([Bind(Include = "Id,FirstName,LastName")] User user)
+		public async Task<ActionResult> Create([Bind(Include = "Id,FirstName,LastName")] User user)
 		{
 			if (ModelState.IsValid)
 			{
-				_userRepository.Create(user);
+				await _userRepository.Create(user);
 				return RedirectToAction("Index");
 			}
 
@@ -51,13 +52,13 @@ namespace DapperORM.Controllers
 		}
 
 		// GET: User/Edit/5
-		public ActionResult Edit(int? id)
+		public async Task<ActionResult> Edit(int? id)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			var user = _userRepository.Get(id.Value);
+			var user = await _userRepository.Get(id.Value);
 			if (user == null)
 			{
 				return HttpNotFound();
@@ -70,24 +71,24 @@ namespace DapperORM.Controllers
 		// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public ActionResult Edit([Bind(Include = "Id,FirstName,LastName")] User user)
+		public async Task<ActionResult> Edit([Bind(Include = "Id,FirstName,LastName")] User user)
 		{
 			if (ModelState.IsValid)
 			{
-				_userRepository.Update(user);
+				await _userRepository.Update(user);
 				return RedirectToAction("Index");
 			}
 			return View(user);
 		}
 
 		// GET: User/Delete/5
-		public ActionResult Delete(int? id)
+		public async Task<ActionResult> Delete(int? id)
 		{
 			if (id == null)
 			{
 				return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 			}
-			User user = _userRepository.Get(id.Value);
+			var user = await _userRepository.Get(id.Value);
 			if (user == null)
 			{
 				return HttpNotFound();
@@ -98,9 +99,9 @@ namespace DapperORM.Controllers
 		// POST: User/Delete/5
 		[HttpPost, ActionName("Delete")]
 		[ValidateAntiForgeryToken]
-		public ActionResult DeleteConfirmed(int id)
+		public async Task<ActionResult> DeleteConfirmed(int id)
 		{
-			_userRepository.Delete(id);
+			await _userRepository.Delete(id);
 			return RedirectToAction("Index");
 		}
 	}

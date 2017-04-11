@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
 
 namespace DapperORM.Models
@@ -11,53 +12,55 @@ namespace DapperORM.Models
 	{
 		private readonly string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
 
-		public List<User> GetUsers()
+		public async Task<IEnumerable<User>> GetUsers()
 		{
-			List<User> users;
+			IEnumerable<User> users;
 			using (IDbConnection db = new SqlConnection(_connectionString))
 			{
-				users = db.Query<User>("SELECT * FROM [User]").ToList();
+				var awaiter = await db.QueryAsync<User>("SELECT * FROM [User]");
+				users = awaiter;
 			}
 			return users;
 		}
 
-		public User Get(int id)
+		public async Task<User> Get(int id)
 		{
 			User user;
 			using (IDbConnection db = new SqlConnection(_connectionString))
 			{
-				user = db.Query<User>("SELECT * FROM [User] WHERE [Id] = @id", new {id}).FirstOrDefault();
+				var awaiter = await db.QueryAsync<User>("SELECT * FROM [User] WHERE [Id] = @id", new {id});
+				user = awaiter.FirstOrDefault();
 			}
 			return user;
 		}
 
-		public User Create(User user)
+		public async Task<User> Create(User user)
 		{
 			using (IDbConnection db = new SqlConnection(_connectionString))
 			{
 				var sqlQuery =
 					"INSERT INTO [User] ([FirstName], [LastName]) VALUES(@FirstName, @LastName); SELECT CAST(SCOPE_IDENTITY() AS INT)";
-				var userId = db.Query<int>(sqlQuery, user).FirstOrDefault();
-				user.Id = userId;
+				var awaiter = await db.QueryAsync<int>(sqlQuery, user);
+				user.Id = awaiter.FirstOrDefault();
 			}
 			return user;
 		}
 
-		public void Update(User user)
+		public async Task Update(User user)
 		{
 			using (IDbConnection db = new SqlConnection(_connectionString))
 			{
 				var sqlQuery = "UPDATE [User] SET [FirstName] = @FirstName, [LastName] = @LastName WHERE [Id] = @Id";
-				db.Execute(sqlQuery, user);
+				await db.ExecuteAsync(sqlQuery, user);
 			}
 		}
 
-		public void Delete(int id)
+		public async Task Delete(int id)
 		{
 			using (IDbConnection db = new SqlConnection(_connectionString))
 			{
 				var sqlQuery = "DELETE FROM [User] WHERE [Id] = @id";
-				db.Execute(sqlQuery, new {id});
+				await db.ExecuteAsync(sqlQuery, new {id});
 			}
 		}
 	}
