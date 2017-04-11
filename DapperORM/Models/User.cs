@@ -1,4 +1,4 @@
-﻿namespace Dapper.Models
+﻿namespace DapperORM.Models
 {
 	public class User
 	{
