@@ -10,7 +10,7 @@ namespace DapperORM.Models
 {
 	public class UserRepository
 	{
-		private readonly string _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+		private readonly string _connectionString = ConfigurationManager.ConnectionStrings["DapperConnection"].ConnectionString;
 
 		public async Task<IEnumerable<User>> GetUsers()
 		{
