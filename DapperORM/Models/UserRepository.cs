@@ -17,8 +17,7 @@ namespace DapperORM.Models
 			IEnumerable<User> users;
 			using (IDbConnection db = new SqlConnection(_connectionString))
 			{
-				var awaiter = await db.QueryAsync<User>("SELECT * FROM [User]");
-				users = awaiter;
+				users = await db.QueryAsync<User>("SELECT * FROM [User]");
 			}
 			return users;
 		}
@@ -28,7 +27,7 @@ namespace DapperORM.Models
 			User user;
 			using (IDbConnection db = new SqlConnection(_connectionString))
 			{
-				var awaiter = await db.QueryAsync<User>("SELECT * FROM [User] WHERE [Id] = @id", new {id});
+				var awaiter = await db.QueryAsync<User>("SELECT * FROM [User] WHERE [Id] = @id", new { id });
 				user = awaiter.FirstOrDefault();
 			}
 			return user;
@@ -60,7 +59,7 @@ namespace DapperORM.Models
 			using (IDbConnection db = new SqlConnection(_connectionString))
 			{
 				var sqlQuery = "DELETE FROM [User] WHERE [Id] = @id";
-				await db.ExecuteAsync(sqlQuery, new {id});
+				await db.ExecuteAsync(sqlQuery, new { id });
 			}
 		}
 	}
